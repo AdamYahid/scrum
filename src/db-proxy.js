@@ -1,7 +1,11 @@
 const fs = require('fs');
 const path = require('path');
-const { DB_PATH, DB_FILE_NAME } = require('./config.js');
+const homeDir = require('os').homedir();
+const configFilePath = path.join(homeDir,'.scrum','config.js');
+const configContent = fs.readFileSync(configFilePath, 'utf8');
+const { DB_PATH, DB_FILE_NAME } = JSON.parse(configContent);
 const fullFilePath = path.join(DB_PATH, DB_FILE_NAME);
+
 
 function readDb() {
   return new Promise((resolve, reject) => {

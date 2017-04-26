@@ -1,7 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 const { Sprint } = require('../models/sprint.js');
-const { DB_PATH, DB_FILE_NAME } = require('../config.js');
+const homeDir = require('os').homedir();
+const configFilePath = path.join(homeDir,'.scrum','config.js');
+const configContent = fs.readFileSync(configFilePath, 'utf8');
+const { DB_PATH, DB_FILE_NAME } = JSON.parse(configContent);
 
 function init(params, cb) {
   const initData = JSON.stringify([Sprint()]);
