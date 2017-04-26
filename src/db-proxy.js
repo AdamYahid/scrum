@@ -4,14 +4,16 @@ const { DB_PATH, DB_FILE_NAME } = require('./config.js');
 const fullFilePath = path.join(DB_PATH, DB_FILE_NAME);
 
 function readDb() {
-  let data = null;
-  try {
-    data = JSON.parse(fs.readFileSync(fullFilePath, 'utf8'));
-  } catch (e) {
-    console.log(`failed reading db - ${e}`);
-  }
-  return data;
-}
+  return new Promise((resolve, reject) => {
+    fs.readFile(fullFilePath, 'utf8', (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(JSON.parse(data));
+      }
+    })
+  });
+};
 
 function flushDataToDb(data, cb){
   const writeFileCb = (err) => {
