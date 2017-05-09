@@ -33,11 +33,12 @@ function flushDataToDb(data, cb){
 } 
 
 function updateCurrentRetro(newRetro, cb) {
-  const data = readDb();
-  const currentSprint = data[data.length - 1];
-  const updatedSprint = Object.assign({}, currentSprint, { retrospective: newRetro });
-  const updatedData = data.slice(0, data.length - 1).concat(updatedSprint);
-  flushDataToDb(updatedData, cb);
+  const data = readDb().then(data => {
+    const currentSprint = data[data.length - 1];
+    const updatedSprint = Object.assign({}, currentSprint, { retrospective: newRetro });
+    const updatedData = data.slice(0, data.length - 1).concat(updatedSprint);
+    flushDataToDb(updatedData, cb);
+  });
 }
 
 function addNewSprint(newSprint, cb) {

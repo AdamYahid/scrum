@@ -25,24 +25,25 @@ function argsParser(args = []) {
 
 function update(args, cb) {
   const actions = argsParser(args);
-  const newData = readDb();
-  const currentSprint = newData[newData.length - 1];
-  const currentRetro = currentSprint.retrospective;
-  const newRetro = {};
-  Object.keys(actions).map((action) => {
-    if (sprintRetroKeys.indexOf(action) > -1) {
-      newRetro[action] = currentRetro[action].concat(actions[action]);
+  const newData = readDb().then((newData) => {
+    const currentSprint = newData[newData.length - 1];
+    const currentRetro = currentSprint.retrospective;
+    const newRetro = {};
+    Object.keys(actions).map((action) => {
+      if (sprintRetroKeys.indexOf(action) > -1) {
+        newRetro[action] = currentRetro[action].concat(actions[action]);
+      }
+    });
+    if (Object.keys(newRetro).length > 0) {
+      updateCurrentRetro(Object.assign({}, currentRetro, newRetro), cb);
+    }
+    if(actions['start-sprint']) {
+      const newSprint = Sprint({
+        name: actions['start-sprint'].join(' ')
+      });
+      addNewSprint(newSprint, cb);
     }
   });
-  if (Object.keys(newRetro).length > 0) {
-    updateCurrentRetro(Object.assign({}, currentRetro, newRetro), cb);
-  }
-  if(actions['start-sprint']) {
-    const newSprint = Sprint({
-      name: actions['start-sprint'].join(' ')
-    });
-    addNewSprint(newSprint, cb);
-  }
 }
 
 module.exports = update;
